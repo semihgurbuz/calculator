@@ -1,0 +1,27 @@
+input {
+  height: 30px;
+  flex: 0 1 50%;
+}
+
+button {
+  font-size: larger;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  flex: 0 1 20%;
+}
+
+.container {
+  margin: 10px 25%;
+  display: flex;
+  justify-content: center;
+  flex-flow: row wrap;
+}
+
+.buttons {
+  /* margin: 0 40%; */
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  flex-flow: row wrap;
+  flex: 0 1 51%;
+}
