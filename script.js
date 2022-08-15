@@ -20,21 +20,23 @@ const operator = (op = op, a = topDisplayNumber, b = mainDisplayNumber) => {
   return op(a, b);
 };
 
-//a function to create classes and add event listeners quickly
-
 const button = document.querySelectorAll("button");
 let mainDisplay = document.querySelector(".current");
-let state;
 let topDisplay = document.querySelector(".previous");
+
+let equalsPressed; //makes sure multiple operations can be chained right after or before equals key is pressed
 
 let mainDisplayNumber;
 let topDisplayNumber;
 let op;
+
+//a function to create classes and add event listeners to number buttons quickly
 function addClass(button) {
   for (let i = 0; i < button.length; i++) {
     let element = button[i];
     let class1 = element.innerHTML;
     element.classList.add(class1);
+
     element.addEventListener("click", () => {
       if (
         class1 != "Clear" &&
@@ -67,6 +69,7 @@ del.addEventListener("click", () => {
 let dot = document.querySelector(".dot");
 dot.addEventListener("click", () => {
   if (mainDisplay.innerHTML.includes(".") != true) {
+    // prevents the user from clicking dot multiple times
     mainDisplay.innerHTML += ".";
     mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
   }
@@ -78,6 +81,7 @@ clear.addEventListener("click", () => {
   mainDisplayNumber = undefined;
   topDisplay.innerHTML = "";
   topDisplayNumber = undefined;
+  equalsPressed = false;
 });
 
 let x = document.querySelector(".x");
@@ -102,8 +106,7 @@ div.addEventListener("click", () => {
 
 let equals = document.querySelector(".equals");
 equals.addEventListener("click", () => {
-  state = "equal";
-
+  equalsPressed = true;
   if (mainDisplay.innerHTML != "" && topDisplay.innerHTML.includes("/")) {
     if (mainDisplayNumber != 0) {
       mainDisplay.innerHTML = equal();
@@ -122,23 +125,27 @@ equals.addEventListener("click", () => {
   topDisplayNumber = undefined;
 });
 
+// this function is called with clicks on operation buttons and reads the strings displayed on the screen
+// and
 const clickFunction = (op) => {
   if (topDisplay.innerHTML.length === 0) {
     topDisplay.innerHTML = mainDisplayNumber + ` ${op}`;
     topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(` ${op}`, ""));
     mainDisplay.innerHTML = "";
-  } else if (state === "equal") {
+  } else if (equalsPressed) {
     topDisplay.innerHTML = topDisplayNumber + ` ${op}`;
     mainDisplayNumber = undefined;
     mainDisplay.innerHTML = "";
-    state = "notequal";
-  } else if (state === "notequal") {
+  } else {
     topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(` ${op}`, ""));
     topDisplay.innerHTML = equal() + ` ${op}`;
     mainDisplay.innerHTML = "";
   }
+  equalsPressed = false;
 };
 
+// this function is called for operations and
+// decides what "op" parameter should be used in the "operator" function
 const equal = () => {
   if (topDisplay.innerHTML.includes("x") || topDisplay.innerHTML.length === 0) {
     op = multiply;
@@ -158,9 +165,9 @@ const equal = () => {
   ) {
     op = subtract;
   }
+
   let result = operator(op, topDisplayNumber, mainDisplayNumber);
   result = parseFloat((Math.round(result * 100) / 100).toFixed(4));
-  // topDisplayNumber = result;
-
+  topDisplayNumber = result; // this is important for making sure equals key works after chaining operations
   return result;
 };
