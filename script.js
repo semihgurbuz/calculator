@@ -24,7 +24,7 @@ const button = document.querySelectorAll("button");
 let mainDisplay = document.querySelector(".current");
 let topDisplay = document.querySelector(".previous");
 
-let equalsPressed; //makes sure multiple operations can be chained right after or before equals key is pressed
+// let equalsPressed; //makes sure multiple operations can be chained right before equals key is pressed
 
 let mainDisplayNumber;
 let topDisplayNumber;
@@ -48,8 +48,13 @@ function addClass(button) {
         class1 != "." &&
         class1 != "Delete"
       ) {
-        mainDisplay.innerHTML += class1;
-        mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
+        if (mainDisplayNumber === 0) {
+          mainDisplay.innerHTML = class1;
+          mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
+        } else {
+          mainDisplay.innerHTML += class1;
+          mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
+        }
       }
     });
   }
@@ -59,11 +64,18 @@ addClass(button);
 
 let del = document.querySelector(".Delete");
 del.addEventListener("click", () => {
-  mainDisplay.innerHTML = mainDisplay.innerHTML.substring(
-    0,
-    mainDisplay.innerHTML.length - 1
-  );
-  mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
+  if (mainDisplay.innerHTML != "") {
+    mainDisplay.innerHTML = mainDisplay.innerHTML.substring(
+      0,
+      mainDisplay.innerHTML.length - 1
+    );
+    if (mainDisplay.innerHTML === "") {
+      mainDisplayNumber = 0;
+      mainDisplay.innerHTML = mainDisplayNumber;
+    } else {
+      mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
+    }
+  }
 });
 
 let dot = document.querySelector(".dot");
@@ -81,7 +93,7 @@ clear.addEventListener("click", () => {
   mainDisplayNumber = undefined;
   topDisplay.innerHTML = "";
   topDisplayNumber = undefined;
-  equalsPressed = false;
+  // equalsPressed = false;
 });
 
 let x = document.querySelector(".x");
@@ -106,63 +118,61 @@ div.addEventListener("click", () => {
 
 let equals = document.querySelector(".equals");
 equals.addEventListener("click", () => {
-  equalsPressed = true;
-  if (mainDisplay.innerHTML != "" && topDisplay.innerHTML.includes("/")) {
-    if (mainDisplayNumber != 0) {
+  // equalsPressed = true;
+
+  if (mainDisplay.innerHTML != "" && mainDisplay.innerHTML != ".") {
+    if (topDisplay.innerHTML.includes("/")) {
+      if (mainDisplayNumber != 0) {
+        mainDisplay.innerHTML = equal();
+        mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
+      } else {
+        alert("Cannot divide by zero !");
+        mainDisplayNumber = undefined;
+        mainDisplay.innerHTML = "";
+      }
+    } else {
+      mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
       mainDisplay.innerHTML = equal();
       mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
-    } else {
-      alert("Cannot divide by zero !");
-      mainDisplayNumber = undefined;
-      mainDisplay.innerHTML = "";
     }
-  } else if (mainDisplay.innerHTML != "") {
-    mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
-    mainDisplay.innerHTML = equal();
-    mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
+    topDisplay.innerHTML = "";
+    topDisplayNumber = undefined;
   }
-  topDisplay.innerHTML = "";
-  topDisplayNumber = undefined;
 });
 
 // this function is called with clicks on operation buttons and reads the strings displayed on the screen
 // and
 const clickFunction = (op) => {
-  if (topDisplay.innerHTML.length === 0) {
-    topDisplay.innerHTML = mainDisplayNumber + ` ${op}`;
-    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(` ${op}`, ""));
-    mainDisplay.innerHTML = "";
-  } else if (equalsPressed) {
-    topDisplay.innerHTML = topDisplayNumber + ` ${op}`;
-    mainDisplayNumber = undefined;
-    mainDisplay.innerHTML = "";
-  } else {
-    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(` ${op}`, ""));
-    topDisplay.innerHTML = equal() + ` ${op}`;
-    mainDisplay.innerHTML = "";
+  if (mainDisplay.innerHTML != "" && mainDisplay.innerHTML != ".") {
+    if (topDisplay.innerHTML.length === 0) {
+      topDisplay.innerHTML = mainDisplayNumber + ` ${op}`;
+      topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(` ${op}`, ""));
+      mainDisplay.innerHTML = "";
+    }
+    // else if (equalsPressed) {
+    //   topDisplay.innerHTML = topDisplayNumber + ` ${op}`;
+    //   mainDisplayNumber = undefined;
+    //   mainDisplay.innerHTML = "";
+    // }
+    else {
+      // topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(` ${op}`, ""));
+      topDisplay.innerHTML = equal() + ` ${op}`;
+      mainDisplay.innerHTML = "";
+    }
+    // equalsPressed = false;
   }
-  equalsPressed = false;
 };
 
 // this function is called for operations and
 // decides what "op" parameter should be used in the "operator" function
 const equal = () => {
-  if (topDisplay.innerHTML.includes("x") || topDisplay.innerHTML.length === 0) {
+  if (topDisplay.innerHTML.includes("x")) {
     op = multiply;
-  } else if (
-    topDisplay.innerHTML.includes("+") ||
-    topDisplay.innerHTML.length === 0
-  ) {
+  } else if (topDisplay.innerHTML.includes("+")) {
     op = add;
-  } else if (
-    topDisplay.innerHTML.includes("/") ||
-    (topDisplay.innerHTML.length === 0 && mainDisplayNumber != 0)
-  ) {
+  } else if (topDisplay.innerHTML.includes("/") && mainDisplayNumber != 0) {
     op = divide;
-  } else if (
-    topDisplay.innerHTML.includes("-") ||
-    topDisplay.innerHTML.length === 0
-  ) {
+  } else if (topDisplay.innerHTML.includes("-")) {
     op = subtract;
   }
 
