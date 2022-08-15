@@ -24,7 +24,7 @@ const operator = (op = op, a = topDisplayNumber, b = mainDisplayNumber) => {
 
 const button = document.querySelectorAll("button");
 let mainDisplay = document.querySelector(".current");
-
+let state;
 let topDisplay = document.querySelector(".previous");
 
 let mainDisplayNumber;
@@ -43,7 +43,8 @@ function addClass(button) {
         class1 != "/" &&
         class1 != "+" &&
         class1 != "-" &&
-        class1 != "."
+        class1 != "." &&
+        class1 != "Delete"
       ) {
         mainDisplay.innerHTML += class1;
         mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
@@ -53,6 +54,15 @@ function addClass(button) {
 }
 
 addClass(button);
+
+let del = document.querySelector(".Delete");
+del.addEventListener("click", () => {
+  mainDisplay.innerHTML = mainDisplay.innerHTML.substring(
+    0,
+    mainDisplay.innerHTML.length - 1
+  );
+  mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
+});
 
 let dot = document.querySelector(".dot");
 dot.addEventListener("click", () => {
@@ -72,62 +82,28 @@ clear.addEventListener("click", () => {
 
 let x = document.querySelector(".x");
 x.addEventListener("click", () => {
-  if (topDisplay.innerHTML.length === 0) {
-    op = multiply;
-    topDisplay.innerHTML = mainDisplayNumber + " x";
-    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(" x", ""));
-    mainDisplay.innerHTML = "";
-  } else {
-    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(" x", ""));
-    topDisplay.innerHTML = equal() + " x";
-    mainDisplay.innerHTML = "";
-  }
+  clickFunction("x");
 });
 
 let add1 = document.querySelector(".add");
 add1.addEventListener("click", () => {
-  if (topDisplay.innerHTML.length === 0) {
-    op = add;
-    topDisplay.innerHTML = mainDisplayNumber + " +";
-    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(" +", ""));
-    mainDisplay.innerHTML = "";
-  } else {
-    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(" +", ""));
-    topDisplay.innerHTML = equal() + " +";
-    mainDisplay.innerHTML = "";
-  }
+  clickFunction("+");
 });
 
 let sub = document.querySelector(".subtract");
 sub.addEventListener("click", () => {
-  if (topDisplay.innerHTML.length === 0) {
-    op = subtract;
-    topDisplay.innerHTML = mainDisplayNumber + " -";
-    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(" -", ""));
-    mainDisplay.innerHTML = "";
-  } else {
-    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(" -", ""));
-    topDisplay.innerHTML = equal() + " -";
-    mainDisplay.innerHTML = "";
-  }
+  clickFunction("-");
 });
 
 let div = document.querySelector(".divide");
 div.addEventListener("click", () => {
-  if (topDisplay.innerHTML.length === 0) {
-    op = divide;
-    topDisplay.innerHTML = mainDisplayNumber + " /";
-    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(" /", ""));
-    mainDisplay.innerHTML = "";
-  } else {
-    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(" /", ""));
-    topDisplay.innerHTML = equal() + " /";
-    mainDisplay.innerHTML = "";
-  }
+  clickFunction("/");
 });
 
 let equals = document.querySelector(".equals");
 equals.addEventListener("click", () => {
+  state = "equal";
+
   if (mainDisplay.innerHTML != "" && topDisplay.innerHTML.includes("/")) {
     if (mainDisplayNumber != 0) {
       mainDisplay.innerHTML = equal();
@@ -138,10 +114,30 @@ equals.addEventListener("click", () => {
       mainDisplay.innerHTML = "";
     }
   } else if (mainDisplay.innerHTML != "") {
+    mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
     mainDisplay.innerHTML = equal();
     mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
   }
+  topDisplay.innerHTML = "";
+  topDisplayNumber = undefined;
 });
+
+const clickFunction = (op) => {
+  if (topDisplay.innerHTML.length === 0) {
+    topDisplay.innerHTML = mainDisplayNumber + ` ${op}`;
+    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(` ${op}`, ""));
+    mainDisplay.innerHTML = "";
+  } else if (state === "equal") {
+    topDisplay.innerHTML = topDisplayNumber + ` ${op}`;
+    mainDisplayNumber = undefined;
+    mainDisplay.innerHTML = "";
+    state = "notequal";
+  } else if (state === "notequal") {
+    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(` ${op}`, ""));
+    topDisplay.innerHTML = equal() + ` ${op}`;
+    mainDisplay.innerHTML = "";
+  }
+};
 
 const equal = () => {
   if (topDisplay.innerHTML.includes("x") || topDisplay.innerHTML.length === 0) {
@@ -164,6 +160,7 @@ const equal = () => {
   }
   let result = operator(op, topDisplayNumber, mainDisplayNumber);
   result = parseFloat((Math.round(result * 100) / 100).toFixed(4));
-  topDisplayNumber = result;
+  // topDisplayNumber = result;
+
   return result;
 };
