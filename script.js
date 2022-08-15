@@ -128,7 +128,16 @@ div.addEventListener("click", () => {
 
 let equals = document.querySelector(".equals");
 equals.addEventListener("click", () => {
-  if (mainDisplay.innerHTML != "") {
+  if (mainDisplay.innerHTML != "" && topDisplay.innerHTML.includes("/")) {
+    if (mainDisplayNumber != 0) {
+      mainDisplay.innerHTML = equal();
+      mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
+    } else {
+      alert("Cannot divide by zero !");
+      mainDisplayNumber = undefined;
+      mainDisplay.innerHTML = "";
+    }
+  } else if (mainDisplay.innerHTML != "") {
     mainDisplay.innerHTML = equal();
     mainDisplayNumber = parseFloat(mainDisplay.innerHTML);
   }
@@ -144,7 +153,7 @@ const equal = () => {
     op = add;
   } else if (
     topDisplay.innerHTML.includes("/") ||
-    topDisplay.innerHTML.length === 0
+    (topDisplay.innerHTML.length === 0 && mainDisplayNumber != 0)
   ) {
     op = divide;
   } else if (
@@ -153,7 +162,6 @@ const equal = () => {
   ) {
     op = subtract;
   }
-
   let result = operator(op, topDisplayNumber, mainDisplayNumber);
   result = parseFloat((Math.round(result * 100) / 100).toFixed(4));
   topDisplayNumber = result;
