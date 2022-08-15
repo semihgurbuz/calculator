@@ -65,7 +65,9 @@ dot.addEventListener("click", () => {
 let clear = document.querySelector(".Clear");
 clear.addEventListener("click", () => {
   mainDisplay.innerHTML = "";
+  mainDisplayNumber = undefined;
   topDisplay.innerHTML = "";
+  topDisplayNumber = undefined;
 });
 
 let x = document.querySelector(".x");
@@ -86,8 +88,8 @@ let add1 = document.querySelector(".add");
 add1.addEventListener("click", () => {
   if (topDisplay.innerHTML.length === 0) {
     op = add;
-    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(" +", ""));
     topDisplay.innerHTML = mainDisplayNumber + " +";
+    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(" +", ""));
     mainDisplay.innerHTML = "";
   } else {
     topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(" +", ""));
@@ -151,11 +153,9 @@ const equal = () => {
   ) {
     op = subtract;
   }
+
   let result = operator(op, topDisplayNumber, mainDisplayNumber);
-  result = parseFloat((Math.round(result * 100) / 100).toFixed(3));
+  result = parseFloat((Math.round(result * 100) / 100).toFixed(4));
   topDisplayNumber = result;
   return result;
 };
-
-console.log(topDisplayNumber);
-console.log(mainDisplayNumber);
