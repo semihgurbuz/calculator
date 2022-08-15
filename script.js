@@ -148,18 +148,18 @@ const clickFunction = (op) => {
       topDisplay.innerHTML = mainDisplayNumber + ` ${op}`;
       topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(` ${op}`, ""));
       mainDisplay.innerHTML = "";
-    }
-    // else if (equalsPressed) {
-    //   topDisplay.innerHTML = topDisplayNumber + ` ${op}`;
-    //   mainDisplayNumber = undefined;
-    //   mainDisplay.innerHTML = "";
-    // }
-    else {
-      // topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(` ${op}`, ""));
+    } else {
       topDisplay.innerHTML = equal() + ` ${op}`;
       mainDisplay.innerHTML = "";
     }
-    // equalsPressed = false;
+  } else if (
+    mainDisplay.innerHTML === "" &&
+    topDisplay.innerHTML != "" &&
+    mainDisplay.innerHTML != "."
+  ) {
+    topDisplay.innerHTML = topDisplayNumber + ` ${op}`;
+    topDisplayNumber = parseFloat(topDisplay.innerHTML.replace(` ${op}`, ""));
+    mainDisplay.innerHTML = "";
   }
 };
 
